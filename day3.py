@@ -3,55 +3,9 @@
 import re
 
 ## Part 1
-# line_count = 0
-# zero_bit_counts = []
-# lines = open("day3_input.txt").readlines()
-# for line in lines:
-#     for idx, bit in enumerate(line):
-#         if bit == "0":
-#             if len(zero_bit_counts) < idx + 1:
-#                 zero_bit_counts.append(1)
-#             else:
-#                 zero_bit_counts[idx] += 1
-#     line_count += 1
-
-# print(zero_bit_counts)
-
-# gamma_rate = ""
-# epsilon_rate = ""
-# for count in zero_bit_counts:
-#     if count > line_count/2:
-#         gamma_rate += "0"
-#         epsilon_rate += "1"
-#     else:
-#         gamma_rate += "1"
-#         epsilon_rate += "0"
-
-# print(gamma_rate)
-# print(int(gamma_rate , 2))
-# print(epsilon_rate)
-# print(int(epsilon_rate, 2))
-
-# print(int(gamma_rate , 2) * int(epsilon_rate, 2))
-
-# print("---")
-
-## Part 2
 line_count = 0
 zero_bit_counts = []
-# lines = open("day3_input.txt").readlines()
-lines = """00100
-11110
-10110
-10111
-10101
-01111
-00111
-11100
-10000
-11001
-00010
-01010""".split("\n")
+lines = open("day3_input.txt").readlines()
 for line in lines:
     for idx, bit in enumerate(line):
         if bit == "0":
@@ -61,40 +15,76 @@ for line in lines:
                 zero_bit_counts[idx] += 1
     line_count += 1
 
-oxygen_generator_lines = lines
-oxygen_generator_rating = None
-co2_scrubber_lines = lines
-co2_scrubber_rating = None
-
 print(zero_bit_counts)
 
-for idx, zcount in enumerate(zero_bit_counts):
-    print(idx)
-    if oxygen_generator_rating == None:
-        if zcount <= line_count/2:
-            # zero bit is less common, one bit is more common, keep numbers with one bit
-            print("zero bit is less common")
-            oxygen_generator_lines = list(filter(lambda l: l[idx] == "1", oxygen_generator_lines))
+gamma_rate = ""
+epsilon_rate = ""
+for count in zero_bit_counts:
+    if count > line_count/2:
+        gamma_rate += "0"
+        epsilon_rate += "1"
+    else:
+        gamma_rate += "1"
+        epsilon_rate += "0"
 
-        else:
-            print("zero bit is more common")
-            oxygen_generator_lines = list(filter(lambda l: l[idx] == "0", oxygen_generator_lines))
+print(gamma_rate)
+print(int(gamma_rate , 2))
+print(epsilon_rate)
+print(int(epsilon_rate, 2))
 
-    if co2_scrubber_rating == None:
-        if zcount < line_count/2:
-            # zero bit is least common, keep numbers with zero bit
-            co2_scrubber_lines = list(filter(lambda l: l[idx] == "0", co2_scrubber_lines))
-        else:
-            co2_scrubber_lines = list(filter(lambda l: l[idx] == "1", co2_scrubber_lines))
+print(int(gamma_rate , 2) * int(epsilon_rate, 2))
 
-    if len(oxygen_generator_lines) == 1:
-        oxygen_generator_rating = oxygen_generator_lines[0]
-    if len(co2_scrubber_lines) == 1:
-        co2_scrubber_rating = co2_scrubber_lines[0]
+print("---")
 
-    if idx >= 6:
-        print(oxygen_generator_lines)
-        print(co2_scrubber_lines)
-        print()
+## Part 2
 
-print(oxygen_generator_rating, co2_scrubber_rating)
+def load_input():
+    lines = list(map(lambda l: l.strip(), open("day3_input.txt").readlines()))
+    # lines = list(map(lambda l: l.strip(), open("day3_input_test.txt").readlines()))
+    return lines
+
+def calc_zero_bit_counts(lines):
+    zero_bit_counts = []
+    for line in lines:
+        for idx, bit in enumerate(line):
+            if len(zero_bit_counts) < idx + 1:
+                zero_bit_counts.append(0)
+            if bit == "0":
+                zero_bit_counts[idx] += 1
+    return zero_bit_counts
+
+def calc_rating(mode):
+    lines = load_input()
+    bitlength = len(lines[0])
+    rating = None
+
+    for idx in range(bitlength):
+        zero_bit_counts = calc_zero_bit_counts(lines)
+        zcount = zero_bit_counts[idx]
+
+        if rating == None:
+            if mode == "oxygen_generator":
+                if zcount <= len(lines)/2:
+                    lines = list(filter(lambda l: l[idx] == "1", lines))
+                else:
+                    lines = list(filter(lambda l: l[idx] == "0", lines))
+            elif mode == "co2_scrubber":
+                if zcount <= len(lines)/2:
+                    lines = list(filter(lambda l: l[idx] == "0", lines))
+                else:
+                    lines = list(filter(lambda l: l[idx] == "1", lines))
+
+        if len(lines) == 1:
+            rating = lines[0]
+
+    return rating
+
+oxy_rating = int(calc_rating("oxygen_generator"), 2)
+co2_rating = int(calc_rating("co2_scrubber"), 2)
+
+print(oxy_rating)
+print(co2_rating)
+
+result = oxy_rating * co2_rating
+print(result)
+
