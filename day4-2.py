@@ -1,7 +1,8 @@
 #!/usr/local/bin/python3
 
 import re
-lines = open("day4_input_test.txt").readlines()
+import sys
+lines = open("day4_input.txt").readlines()
 
 drawn_numbers = list(map(lambda n: int(n), lines[0].split(",")))
 print(drawn_numbers)
@@ -19,6 +20,10 @@ def load_boards(lines):
             boards[board_idx].append(list(map(lambda n: int(n), line.split())))
     return boards
 
+def print_board(board):
+    for row in board:
+        print(" ".join([(("%2d" % num) if (num != None) else "  ") for num in row]))
+
 def check_winner(board, drawn_number):
     board_size = len(board[0])
     for idx_row, row in enumerate(board):
@@ -33,7 +38,12 @@ def check_winner(board, drawn_number):
     # check column
     for idx_col, _ in enumerate(board[0]):
         col = [row[idx_col] for row in board]
+        # if drawn_number == 61:
+        #     print(f"col: {col}")
         if all([n is None for n in col]):
+            # if drawn_number == 61:
+            #     print(col)
+            #     sys.exit()
             print(f"winner board: {board}")
             return board
     return False
@@ -52,13 +62,18 @@ boards = load_boards(lines[1:])
 
 for number in drawn_numbers:
     print(f"drawn_number: {number}")
-    if number == 13:
-        print(boards)
+    idx_board_to_delete = None
+    if boards == []:
+        break
     for idx, board in enumerate(boards):
         winner = check_winner(board, number)
         if winner:
+            if number == 61:
+                print_board(board)
             score = calculate_score(board, number)
             print(f"score: {score}")
-            print(f"removing board {idx}")
-            del boards[idx]
-
+            idx_board_to_delete = idx
+    if idx_board_to_delete != None:
+        print(f"removing board {idx}")
+        print("")
+        del boards[idx_board_to_delete]
