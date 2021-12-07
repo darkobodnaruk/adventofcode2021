@@ -21,8 +21,6 @@ def load_boards(lines):
     return boards
 
 def print_board(board):
-    if board is None:
-        return
     for row in board:
         print("| " + " ".join([(("%2d" % num) if (num != None) else "  ") for num in row]))
 
@@ -52,6 +50,7 @@ def calculate_score(board, number):
             if num != None:
                 unmarked_numbers_sum += num
     print(f"unmarked_numbers_sum: {unmarked_numbers_sum}")
+    print(f"number: {number}")
     return unmarked_numbers_sum * number
 
 
@@ -63,7 +62,7 @@ for number in drawn_numbers:
     if all([board is None for board in boards]):
         break
     for idx, board in enumerate(boards):
-        if idx == 56 or idx == 74:
+        if board != None and (idx == 56 or idx == 74): # printing out 2 specific boards
             print(f"board idx {idx}")
             print_board(board)
         if board == None:
