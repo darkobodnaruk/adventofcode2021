@@ -21,8 +21,10 @@ def load_boards(lines):
     return boards
 
 def print_board(board):
+    if board is None:
+        return
     for row in board:
-        print(" ".join([(("%2d" % num) if (num != None) else "  ") for num in row]))
+        print("| " + " ".join([(("%2d" % num) if (num != None) else "  ") for num in row]))
 
 def check_winner(board, drawn_number):
     board_size = len(board[0])
@@ -33,18 +35,13 @@ def check_winner(board, drawn_number):
     # check row
     for idx_row, row in enumerate(board):
         if all([n is None for n in row]):
-            print(f"winner board: {board}")
+            print(f"winner board (on row): {board}")
             return board
     # check column
     for idx_col, _ in enumerate(board[0]):
         col = [row[idx_col] for row in board]
-        # if drawn_number == 61:
-        #     print(f"col: {col}")
         if all([n is None for n in col]):
-            # if drawn_number == 61:
-            #     print(col)
-            #     sys.exit()
-            print(f"winner board: {board}")
+            print(f"winner board (on col): {board}")
             return board
     return False
 
@@ -61,19 +58,24 @@ def calculate_score(board, number):
 boards = load_boards(lines[1:])
 
 for number in drawn_numbers:
-    print(f"drawn_number: {number}")
-    idx_board_to_delete = None
-    if boards == []:
+    print(f">>> drawn_number: {number}")
+    idx_boards_to_delete = []
+    if all([board is None for board in boards]):
         break
     for idx, board in enumerate(boards):
+        if idx == 56 or idx == 74:
+            print(f"board idx {idx}")
+            print_board(board)
+        if board == None:
+            continue
         winner = check_winner(board, number)
         if winner:
-            if number == 61:
-                print_board(board)
             score = calculate_score(board, number)
             print(f"score: {score}")
-            idx_board_to_delete = idx
-    if idx_board_to_delete != None:
+            idx_boards_to_delete.append(idx)
+    if len(idx_boards_to_delete) > 1:
+        print("wat??")
+    for idx in idx_boards_to_delete:
         print(f"removing board {idx}")
         print("")
-        del boards[idx_board_to_delete]
+        boards[idx] = None
