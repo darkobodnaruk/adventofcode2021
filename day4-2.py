@@ -33,13 +33,11 @@ def check_winner(board, drawn_number):
     # check row
     for idx_row, row in enumerate(board):
         if all([n is None for n in row]):
-            print(f"winner board (on row): {board}")
             return board
     # check column
     for idx_col, _ in enumerate(board[0]):
         col = [row[idx_col] for row in board]
         if all([n is None for n in col]):
-            print(f"winner board (on col): {board}")
             return board
     return False
 
@@ -62,19 +60,14 @@ for number in drawn_numbers:
     if all([board is None for board in boards]):
         break
     for idx, board in enumerate(boards):
-        if board != None and (idx == 56 or idx == 74): # printing out 2 specific boards
-            print(f"board idx {idx}")
-            print_board(board)
         if board == None:
             continue
         winner = check_winner(board, number)
         if winner:
+            print(f"board {idx} won")
             score = calculate_score(board, number)
             print(f"score: {score}")
             idx_boards_to_delete.append(idx)
-    if len(idx_boards_to_delete) > 1:
-        print("wat??")
     for idx in idx_boards_to_delete:
         print(f"removing board {idx}")
-        print("")
         boards[idx] = None
