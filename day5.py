@@ -21,16 +21,14 @@ for line in input:
     y1 = int(m.group(2))
     x2 = int(m.group(3))
     y2 = int(m.group(4))
-    if not (is_horizontal_or_vertical(x1, y1, x2, y2)):
-    # if not (is_horizontal_or_vertical(x1, y1, x2, y2) or is_45_degree_diagonal(x1, y1, x2, y2)):
+    # if not (is_horizontal_or_vertical(x1, y1, x2, y2)):
+    if not (is_horizontal_or_vertical(x1, y1, x2, y2) or is_45_degree_diagonal(x1, y1, x2, y2)):
         continue
 
     lines.append([x1,y1, x2,y2])
     max_c = max(x1,x2,y1,y2)
     if max_c > max_coordinate:
         max_coordinate = max_c
-    # print(f"{x1},{y1} {x2},{y2} {max_coordinate}")
-
 
 field = [[0 for x in range(max_coordinate+1)] for y in range(max_coordinate+1)]
 
@@ -52,9 +50,17 @@ for line in lines:
         for x in range(min(x1,x2), max(x1,x2)+1):
             field[y1][x] += 1
     if is_45_degree_diagonal(x1, y1, x2, y2):
-        for y in range(min(y1,y2), max(y1,y2)+1):
-            for x in range(min(x1,x2), max(x1,x2)+1):
-                field[y][x] += 1
+        x_step = int((x2 - x1) / abs(x2 - x1))
+        y_step = int((y2 - y1) / abs(y2 - y1))
+        x = x1
+        y = y1
+        field[y][x] += 1
+        while x != x2:
+            x += x_step
+            y += y_step
+            field[y][x] += 1
+
+# print_field(field)
 
 count2 = 0
 for line in field:
